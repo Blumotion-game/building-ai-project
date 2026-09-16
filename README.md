@@ -16,6 +16,26 @@ This solution utilizes Computer Vision and Facial Recognition algorithms to auth
 ## How is it used?
 The user approaches an entrance equipped with a camera. The `wolfen-face-api` captures a frame, processes the facial data, and communicates with the backend management system. If the user is recognized, the system automatically triggers the gate or door to unlock, creating a completely frictionless check-in experience.
 
+```python
+import numpy as np
+from scipy.spatial.distance import cosine
+
+def authenticate_user(live_embedding, database_embeddings, threshold=0.4):
+    """
+    Calculates the cosine distance between the live camera face vector 
+    and the stored authorized vectors.
+    """
+    for user_id, stored_embedding in database_embeddings.items():
+        # Calculate cosine distance (lower is more similar)
+        distance = cosine(live_embedding, stored_embedding)
+        
+        if distance < threshold:
+            print(f"Access Granted: User {user_id}")
+            return True, user_id
+            
+    print("Access Denied: Unrecognized face.")
+    return False, None
+
 ## Challenges
 * **Privacy and Compliance:** Handling biometric data requires strict adherence to privacy laws and secure database encryption.
 * **Environmental Factors:** Poor lighting conditions or extreme camera angles can reduce recognition accuracy.
